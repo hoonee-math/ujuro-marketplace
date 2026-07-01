@@ -13,6 +13,13 @@
       "description": "ujuro 마켓플레이스와 제작자 최광훈(hoonee-math)을 소개하는 인사 플러그인",
       "version": "1.0.0",
       "keywords": ["hello", "introduction", "ujuro"]
+    },
+    {
+      "name": "youtube-summarize",
+      "source": "./plugins/youtube-summarize",
+      "description": "YouTube 영상 또는 제공된 영어 회화 자료를 학습용 PPT + 편집 MP3로 만든다 (초기 지원: 영어 회화연습)",
+      "version": "1.0.0",
+      "keywords": ["youtube", "ppt", "english", "study", "summarize"]
     }
   ]
 }

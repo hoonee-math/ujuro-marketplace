@@ -1,0 +1,5 @@
+yt-dlp
+python-pptx
+imageio-ffmpeg
+pytest
+

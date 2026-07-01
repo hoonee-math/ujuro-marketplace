@@ -6,3 +6,13 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# superpowers 설계 문서 (로컬 전용, 추적 안 함)
+docs/superpowers/
+
+# Python 아티팩트 (번들 스크립트)
+__pycache__/
+*.pyc
+
+# 스킬 산출물 (혹시 repo 안에서 실행될 경우)
+/youtube-summarize/
