@@ -19,6 +19,7 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run <cmd> ...
 |------|------|------------|
 | `collect "<URL>"` | 오디오+자막+메타 다운로드, 대본 생성 | `video_id, workdir, work_dir, analysis_path, title, ...` |
 | `render <video-id>` | `.work/analysis.json` → 트림 MP3 + PPT | `pptx_path, mp3_path, study_json_path, n_sentences` |
+| `embed-audio <video-id> [--leadin <초>]` | 슬라이드별 오디오 임베드(자동재생)+자동전환 덱 생성 | `autoplay_pptx_path, n_content_slides, leadin_seconds, audio_seconds, locked_fallback` |
 | `retrim <video-id> --coords original\|edited [--intro/--outro/--front/--back <초>]` | 원본에서 재트림, 백업 후 덮어쓰기 | `pptx_path, mp3_path, backup_dir, backed_up, cut` |
 | `doctor` | 환경 진단 | 텍스트 |
 
@@ -28,11 +29,13 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run <cmd> ...
 <cwd>/youtube-summarize/<제목>-[video-id]/
 ├── slides.pptx            # 최종물
 ├── audio.trimmed.mp3      # 최종물
+├── slides.autoplay.pptx   # 최종물(옵션: embed-audio, 음성 포함 자동재생)
 ├── .work/                 # 중간물
 │   ├── audio.source.mp3   #   원본(retrim 소스, 보존)
 │   ├── audio.ko.vtt, info.json, transcript.json
 │   ├── analysis.json      #   Claude가 작성
-│   └── cut.json, study.json
+│   ├── cut.json, study.json
+│   └── seg/               #   embed-audio 구간 오디오(seg01.mp3 …)
 └── .history/<stamp>/      # retrim 덮어쓰기 전 백업
     ├── slides.pptx
     └── audio.trimmed.mp3
@@ -44,5 +47,5 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run <cmd> ...
 ## 모듈 개요
 - `run.py` CLI 진입점 / `tools.py` collect·render·retrim 오케스트레이션
 - `fetch.py` yt-dlp 다운로드 / `transcribe.py` VTT→transcript / `derive.py` cut 적용
-- `trim.py` ffmpeg 트림 / `build_ppt.py` PPTX 렌더 / `paths.py` cwd·.work·.history 경로
+- `trim.py` ffmpeg 트림 / `build_ppt.py` PPTX 렌더 / `autoplay.py` 음성 포함 자동재생 덱 / `paths.py` cwd·.work·.history 경로
 - `schema.py` 검증 / `ffmpeg_bin.py` ffmpeg / `timeutil.py` / `logging_setup.py` / `doctor.py`

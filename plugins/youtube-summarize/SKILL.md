@@ -23,8 +23,8 @@ pip install -r "${CLAUDE_PLUGIN_ROOT}/scripts/requirements.txt"
   ```bash
   PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run <cmd> ...
   ```
-- 산출물: `<cwd>/youtube-summarize/<제목>-[id]/` 에 `slides.pptx` + `audio.trimmed.mp3`.
-  중간물은 `.work/`, 재편집 백업은 `.history/`.
+- 산출물: `<cwd>/youtube-summarize/<제목>-[id]/` 에 `slides.pptx` + `audio.trimmed.mp3`
+  (옵션으로 음성 포함 자동재생 `slides.autoplay.pptx`). 중간물은 `.work/`, 재편집 백업은 `.history/`.
 
 ## 라우터 (입력 모드 → 분류 → 분기 → 렌더)
 
@@ -56,6 +56,18 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run collect "<URL>
 PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render <video-id>
 ```
 → `{"pptx_path","mp3_path","study_json_path","n_sentences"}`. 사용자에게 경로 안내.
+
+### 5) (옵션) PPT에 음성 포함 — 렌더 후 사용자에게 물어본다
+렌더 결과를 안내한 뒤 **"PPT에 음성을 넣어 슬라이드가 자동으로 재생·전환되는 버전도 만들까요?"** 라고 묻는다.
+- **예** → 아래 실행. 각 슬라이드에 그 구간 오디오가 임베드되어 **열리면 자동재생 + 구간 길이만큼 뒤 자동 전환**되고, 아무 페이지로 점프해도 그 페이지 구간이 처음부터 재생된다.
+  ```bash
+  PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run embed-audio <video-id>
+  ```
+  → `{"autoplay_pptx_path","n_content_slides","leadin_seconds","audio_seconds","locked_fallback"}`.
+  - `--leadin <초>`(기본 1.0): 각 구간을 시작점보다 그만큼 앞당겨 자른다(앞 페이지와 살짝 겹침, 첫 단어 잘림 방지). 끝 시점은 그대로.
+  - `locked_fallback: true` 면 대상 파일이 PowerPoint에서 열려 있어 `slides.autoplay.new.pptx` 로 저장된 것 → 사용자에게 원본을 닫고 재실행하면 정식 이름으로 저장된다고 안내.
+  - 안내: 자동재생/임베드 오디오는 **데스크톱 PowerPoint 기준**이다(Google Slides·Keynote에선 그대로 안 될 수 있음). 슬라이드 우상단에 작은 스피커 아이콘이 보이면 정상.
+- **아니오** → 여기서 끝. (기본 `slides.pptx` 는 음성 없는 학습용 덱.)
 
 ## 재편집 (요청 시)
 사용자가 "앞 5초 더 잘라", "인트로 1:10까지" 등 컷 조정을 요청하면

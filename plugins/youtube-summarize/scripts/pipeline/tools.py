@@ -10,6 +10,7 @@ from pipeline.transcribe import transcript_from_vtt
 from pipeline.derive import apply_cut, resolve_cut
 from pipeline.trim import trim
 from pipeline.build_ppt import build_ppt
+from pipeline.autoplay import build_autoplay
 from pipeline.schema import validate_analysis, validate_study
 from pipeline.logging_setup import setup_logging
 
@@ -85,6 +86,21 @@ def render(video_id: str) -> dict:
     log.info("rendered %s (%d sentences)", video_id, n)
     return {"pptx_path": str(wd / "slides.pptx"), "mp3_path": str(wd / "audio.trimmed.mp3"),
             "study_json_path": str(work / "study.json"), "n_sentences": n}
+
+
+def embed_audio(video_id: str, leadin: float = 1.0) -> dict:
+    """render 산출물(slides.pptx + audio.trimmed.mp3)로 음성 포함 자동재생 덱을 만든다.
+
+    각 슬라이드에 그 구간 오디오 임베드(열리면 자동재생) + 구간 길이만큼 뒤 자동 전환.
+    아무 페이지로 점프해도 그 페이지 구간이 처음부터 재생된다. 원본 slides.pptx 는 그대로 둔다.
+    """
+    wd = workdir_for(video_id)
+    work = work_dir(wd)
+    study = json.loads((work / "study.json").read_text(encoding="utf-8"))
+    res = build_autoplay(study, wd, leadin=leadin)
+    log.info("embedded audio %s -> %s (%d slides)", video_id,
+             res["autoplay_pptx_path"], res["n_content_slides"])
+    return res
 
 
 def retrim(video_id: str, coords: str, intro=None, outro=None, front=None, back=None) -> dict:
