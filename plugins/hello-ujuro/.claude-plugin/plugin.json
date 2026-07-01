@@ -1,0 +1,11 @@
+{
+  "name": "hello-ujuro",
+  "description": "ujuro 마켓플레이스와 제작자 최광훈(hoonee-math)을 소개하는 인사 플러그인",
+  "version": "1.0.0",
+  "author": {
+    "name": "최광훈 (hoonee-math)",
+    "url": "https://github.com/hoonee-math"
+  },
+  "homepage": "https://github.com/hoonee-math/ujuro-marketplace",
+  "keywords": ["hello", "introduction", "ujuro"]
+}

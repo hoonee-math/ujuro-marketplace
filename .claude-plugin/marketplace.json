@@ -1,0 +1,18 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "ujuro",
+  "description": "hoonee-math(최광훈)의 개인 Claude Code 플러그인 마켓플레이스",
+  "owner": {
+    "name": "최광훈 (hoonee-math)",
+    "url": "https://github.com/hoonee-math"
+  },
+  "plugins": [
+    {
+      "name": "hello-ujuro",
+      "source": "./plugins/hello-ujuro",
+      "description": "ujuro 마켓플레이스와 제작자 최광훈(hoonee-math)을 소개하는 인사 플러그인",
+      "version": "1.0.0",
+      "keywords": ["hello", "introduction", "ujuro"]
+    }
+  ]
+}
