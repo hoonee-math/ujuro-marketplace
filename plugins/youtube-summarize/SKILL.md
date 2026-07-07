@@ -74,6 +74,18 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render <video-
 사용자가 "프린트해서 연습", "A4로 뽑아줘", "인쇄용 정리" 등 **종이 인쇄물**을 원하면
 → `references/steps/a4-print.md` 를 읽고 진행한다. (포맷 여러 종 — 사용자에게 확인 후 `render-a4`)
 
+### 7) (옵션) MP4 학습 영상 — 요청 시
+사용자가 "영상으로", "mp4로", "자동으로 넘어가는 영상" 등을 원하면 아래를 실행한다.
+각 페이지가 그 구간 나레이션이 끝나면 **자동으로 다음 페이지로 전환**되는 단순 영상이다.
+```bash
+PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render-video <video-id> [--title-hold 3]
+```
+→ `{"video_path","n_content_slides","title_hold_seconds","leadin_seconds","video_seconds"}` (→ `<workdir>/slides.mp4`).
+- **주의: 이 기능은 Windows + MS PowerPoint 가 필요**하다(슬라이드→이미지 렌더). ffmpeg 도 필요.
+- `--leadin`(기본 0): 페이지 경계에서 정확히 컷. `--title-hold`(기본 3): 타이틀 슬라이드 정지 초.
+- 전제: `render` 가 먼저 실행되어 `slides.pptx` + `audio.trimmed.mp3` 가 있어야 한다.
+- 정지 슬라이드라 10fps·ultrafast 로 인코딩한다(렌더 시간은 영상 길이에 비례).
+
 ## 재편집 (요청 시)
 사용자가 "앞 5초 더 잘라", "인트로 1:10까지" 등 컷 조정을 요청하면
 → `references/steps/retrim-audio.md` 참조. (원본에서 재트림, 덮어쓰기 전 `.history` 백업)
