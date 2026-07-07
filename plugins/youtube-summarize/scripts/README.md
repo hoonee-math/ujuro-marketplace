@@ -47,5 +47,5 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run <cmd> ...
 ## 모듈 개요
 - `run.py` CLI 진입점 / `tools.py` collect·render·retrim 오케스트레이션
 - `fetch.py` yt-dlp 다운로드 / `transcribe.py` VTT→transcript / `derive.py` cut 적용
-- `trim.py` ffmpeg 트림 / `build_ppt.py` PPTX 렌더 / `autoplay.py` 음성 포함 자동재생 덱 / `paths.py` cwd·.work·.history 경로
+- `trim.py` ffmpeg 트림 / `build_ppt_compact.py` PPTX 렌더(A4 가로) / `build_a4.py` A4 세로 프린트 덱 / `autoplay.py` 음성 포함 자동재생 덱 / `paths.py` cwd·.work·.history 경로
 - `schema.py` 검증 / `ffmpeg_bin.py` ffmpeg / `timeutil.py` / `logging_setup.py` / `doctor.py`

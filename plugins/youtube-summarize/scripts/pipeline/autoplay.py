@@ -4,7 +4,8 @@
 + 구간 길이만큼 뒤 자동 전환(advTm)을 건다. 오디오를 슬라이드별로 나눠 넣으므로,
 자동 진행이든 사용자가 아무 페이지로 점프하든 그 페이지 구간이 처음부터 재생된다.
 
-레이아웃/페이지네이션은 build_ppt 와 동일 함수를 재사용해 슬라이드↔구간 매핑을 일치시킨다.
+페이지네이션은 렌더러(build_ppt_compact.content_pages)와 동일 함수를 재사용해
+슬라이드↔구간 매핑을 일치시킨다.
 python-pptx 는 미디어 임베드·전환 API가 없어 OOXML 을 직접 주입한다.
 
 주의(검증됨): 미디어 개체를 화면 밖(음수 좌표)에 두면 PowerPoint 가 자동재생을 안 걸고
@@ -22,7 +23,7 @@ from pptx.oxml import parse_xml
 from pptx.oxml.ns import nsdecls, qn
 from pptx.util import Inches
 
-from pipeline.build_ppt import _groups, _paginate, BOTTOM, TOP
+from pipeline.build_ppt_compact import content_pages
 from pipeline.ffmpeg_bin import ffmpeg_exe
 
 TITLE_HOLD = 3.0  # 제목 슬라이드 표시 시간(초, 무음)
@@ -42,16 +43,9 @@ def _audio_duration(mp3: Path) -> float:
     return int(h) * 3600 + int(mi) * 60 + float(s)
 
 
-def _slide_starts(study: dict, layout: str = "classic"):
+def _slide_starts(study: dict):
     """렌더와 동일한 페이지네이션으로 내용 슬라이드별 시작 시각(트림 기준)을 구한다."""
-    if layout == "compact":
-        from pipeline.build_ppt_compact import content_pages
-        pages = content_pages(study)
-    else:
-        prs = Presentation()
-        usable_h = prs.slide_height - TOP - BOTTOM
-        pages = _paginate(_groups(study["deck"]["rows"]), usable_h)
-    return [pg[0][0]["t_seconds"] for pg in pages]
+    return [pg[0][0]["t_seconds"] for pg in content_pages(study)]
 
 
 def _split_segments(mp3: Path, starts, total: float, seg_dir: Path, leadin: float):
@@ -154,11 +148,10 @@ def _fix_audio_rel_types(pptx_path: Path) -> int:
     return fixed
 
 
-def build_autoplay(study: dict, wd, leadin: float = 1.0, layout: str = "classic") -> dict:
+def build_autoplay(study: dict, wd, leadin: float = 1.0) -> dict:
     """slides.pptx + audio.trimmed.mp3 → slides.autoplay.pptx.
 
     leadin: 각 구간을 시작점보다 몇 초 앞당겨 자를지(중복 허용, 첫 구간은 0에서 클램프). 끝은 그대로.
-    layout: slides.pptx 를 만든 레이아웃(classic|compact) — 같은 페이지네이션으로 구간을 나눈다.
     대상 파일이 PowerPoint 에서 열려 잠겨 있으면 slides.autoplay.new.pptx 로 대체 저장한다.
     """
     wd = Path(wd)
@@ -169,7 +162,7 @@ def build_autoplay(study: dict, wd, leadin: float = 1.0, layout: str = "classic"
         raise FileNotFoundError("먼저 render 로 slides.pptx 와 audio.trimmed.mp3 를 만들어야 합니다.")
 
     total = _audio_duration(mp3)
-    starts = _slide_starts(study, layout)
+    starts = _slide_starts(study)
     segs = _split_segments(mp3, starts, total, wd / ".work" / "seg", leadin)
 
     prs = Presentation(str(src))

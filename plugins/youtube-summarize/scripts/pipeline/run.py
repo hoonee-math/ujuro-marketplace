@@ -1,7 +1,7 @@
 """YouTube → PPT CLI. Claude(Code)가 스킬 안내에 따라 Bash로 호출한다.
 
   python -m pipeline.run collect <url>      # 오디오·자막·대본 준비 → workdir 출력
-  python -m pipeline.run render <video-id> [--layout classic|compact]  # analysis.json → 트림 MP3 + PPT
+  python -m pipeline.run render <video-id>  # analysis.json → 트림 MP3 + PPT (A4 가로 compact)
   python -m pipeline.run render-a4 <video-id> [--mode first|all] [--max-per-page 27]  # A4 프린트 덱
   python -m pipeline.run embed-audio <video-id> [--leadin <초>]  # 음성 포함 자동재생 덱 생성
   python -m pipeline.run retrim <video-id> --coords original|edited [--intro/--outro/--front/--back]
@@ -27,8 +27,6 @@ def main():
 
     r = sub.add_parser("render", help="analysis.json → 트림+PPT")
     r.add_argument("video_id")
-    r.add_argument("--layout", default="classic", choices=sorted(tools.LAYOUTS),
-                   help="classic: 16:9, 영어/한글 두 줄 | compact: A4 가로, 영어+한글 한 줄(조밀)")
 
     ra = sub.add_parser("render-a4", help="A4 세로 프린트 덱 (영어 예문 연습 인쇄물)")
     ra.add_argument("video_id")
@@ -54,7 +52,7 @@ def main():
     if args.cmd == "collect":
         _print(tools.collect(args.url))
     elif args.cmd == "render":
-        _print(tools.render(args.video_id, layout=args.layout))
+        _print(tools.render(args.video_id))
     elif args.cmd == "render-a4":
         _print(tools.render_a4(args.video_id, mode=args.mode,
                                max_per_page=args.max_per_page))

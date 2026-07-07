@@ -1,10 +1,9 @@
-"""컴팩트 학습 덱 렌더러 — A4 가로, 예문은 '영어 + 한글'을 한 줄에.
+"""학습 덱 렌더러 — A4 가로, 예문은 '영어 + 한글'을 한 줄에.
 
-classic(build_ppt)과 같은 덱 구조(header/line, 그룹 단위 페이지네이션)를 받아
-더 조밀하게 그린다. 같은 페이지에 더 많은 문장이 들어간다.
+덱(header/line, 그룹 단위 페이지네이션)을 받아 한 페이지에 최대한 많은 문장을 담는다.
 
 - 페이지: A4 가로(29.7×21cm) — 화면 학습과 인쇄 양쪽에 적합.
-- header: 원형 번호 배지 + 영어 템플릿 + 한국어 뜻 + [시간] 한 줄 (classic 과 동일 구성, 약간 축소).
+- header: 원형 번호 배지 + 영어 템플릿 + 한국어 뜻 + [시간] 한 줄.
 - line: 영어 원문 바로 뒤에 한글 번역을 같은 줄에 이어 붙인다.
   폭을 넘길 것으로 추정되는 줄만 2줄 높이를 배정한다(word_wrap 허용) —
   추정은 문자폭 휴리스틱(라틴/한글 폭 구분 + 안전여유)이며, 렌더와 페이지네이션이
@@ -19,13 +18,11 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.dml.color import RGBColor
 
-from pipeline.build_ppt import _groups
-
 # A4 가로
 PAGE_W = Inches(11.69)
 PAGE_H = Inches(8.27)
 
-# 여백 / 크기 (classic 보다 조밀)
+# 여백 / 크기 (조밀)
 LEFT = Inches(0.5)
 RIGHT = Inches(0.5)
 TOP = Inches(0.45)
@@ -50,6 +47,21 @@ SLATE = RGBColor(0x5B, 0x6B, 0x8C)
 INK = RGBColor(0x22, 0x22, 0x22)
 GRAY = RGBColor(0x70, 0x70, 0x70)
 WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+
+def _groups(rows):
+    """rows 를 패턴 그룹(header + 그 예문들)으로 묶는다."""
+    groups, cur = [], []
+    for row in rows:
+        if row["kind"] == "header":
+            if cur:
+                groups.append(cur)
+            cur = [row]
+        else:
+            cur.append(row)
+    if cur:
+        groups.append(cur)
+    return groups
+
 
 # 줄바꿈 추정용 문자폭(인치) — 15pt 라틴 / 12.5pt 한글(전각) / 12.5pt 반각
 _W_LAT = 0.100
