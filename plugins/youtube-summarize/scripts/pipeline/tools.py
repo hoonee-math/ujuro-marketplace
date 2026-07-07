@@ -10,6 +10,7 @@ from pipeline.transcribe import transcript_from_vtt
 from pipeline.derive import apply_cut, resolve_cut
 from pipeline.trim import trim
 from pipeline.build_ppt import build_ppt
+from pipeline.build_a4 import build_a4, DEFAULT_MAX_PER_PAGE
 from pipeline.autoplay import build_autoplay
 from pipeline.schema import validate_analysis, validate_study
 from pipeline.logging_setup import setup_logging
@@ -100,6 +101,22 @@ def embed_audio(video_id: str, leadin: float = 1.0) -> dict:
     res = build_autoplay(study, wd, leadin=leadin)
     log.info("embedded audio %s -> %s (%d slides)", video_id,
              res["autoplay_pptx_path"], res["n_content_slides"])
+    return res
+
+
+def render_a4(video_id: str, mode: str = "first",
+              max_per_page: int = DEFAULT_MAX_PER_PAGE) -> dict:
+    """render 산출물(study.json)로 A4 세로 프린트 덱(영어 예문 연습 인쇄물)을 만든다.
+
+    포맷(mode)은 계속 추가될 수 있고, 산출물은 <workdir>/A4.<mode>.pptx 로
+    mode 별로 공존한다. 기존 slides.pptx 는 그대로 둔다.
+    """
+    wd = workdir_for(video_id)
+    work = work_dir(wd)
+    study = json.loads((work / "study.json").read_text(encoding="utf-8"))
+    res = build_a4(study, wd / f"A4.{mode}.pptx", mode=mode, max_per_page=max_per_page)
+    log.info("rendered a4 %s mode=%s -> %s (%d items, %d pages)",
+             video_id, mode, res["pptx_path"], res["n_items"], res["pages"])
     return res
 
 

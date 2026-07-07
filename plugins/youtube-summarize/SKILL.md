@@ -69,6 +69,10 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render <video-
   - 안내: 자동재생/임베드 오디오는 **데스크톱 PowerPoint 기준**이다(Google Slides·Keynote에선 그대로 안 될 수 있음). 슬라이드 우상단에 작은 스피커 아이콘이 보이면 정상.
 - **아니오** → 여기서 끝. (기본 `slides.pptx` 는 음성 없는 학습용 덱.)
 
+### 6) (옵션) A4 프린트 버전 — 요청 시
+사용자가 "프린트해서 연습", "A4로 뽑아줘", "인쇄용 정리" 등 **종이 인쇄물**을 원하면
+→ `references/steps/a4-print.md` 를 읽고 진행한다. (포맷 여러 종 — 사용자에게 확인 후 `render-a4`)
+
 ## 재편집 (요청 시)
 사용자가 "앞 5초 더 잘라", "인트로 1:10까지" 등 컷 조정을 요청하면
 → `references/steps/retrim-audio.md` 참조. (원본에서 재트림, 덮어쓰기 전 `.history` 백업)
