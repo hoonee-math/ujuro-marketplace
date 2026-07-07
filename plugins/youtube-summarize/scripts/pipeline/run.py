@@ -4,6 +4,7 @@
   python -m pipeline.run render <video-id>  # analysis.json → 트림 MP3 + PPT (A4 가로 compact)
   python -m pipeline.run render-a4 <video-id> [--mode first|all] [--max-per-page 27]  # A4 프린트 덱
   python -m pipeline.run embed-audio <video-id> [--leadin <초>]  # 음성 포함 자동재생 덱 생성
+  python -m pipeline.run render-video <video-id> [--leadin 0] [--title-hold 3]  # 페이지 자동전환 MP4
   python -m pipeline.run retrim <video-id> --coords original|edited [--intro/--outro/--front/--back]
 """
 import argparse
@@ -40,6 +41,13 @@ def main():
     ea.add_argument("--leadin", type=float, default=1.0,
                     help="각 구간을 시작점보다 이만큼 앞당겨 자름(초, 기본 1.0). 끝은 그대로.")
 
+    rv = sub.add_parser("render-video", help="페이지 자동전환 MP4 학습 영상")
+    rv.add_argument("video_id")
+    rv.add_argument("--leadin", type=float, default=0.0,
+                    help="각 구간을 시작점보다 앞당겨 자름(초, 기본 0=정확한 컷).")
+    rv.add_argument("--title-hold", type=float, default=3.0,
+                    help="타이틀 슬라이드 정지 시간(초, 기본 3.0).")
+
     rt = sub.add_parser("retrim", help="트림만 재조정")
     rt.add_argument("video_id")
     rt.add_argument("--coords", required=True, choices=["original", "edited"])
@@ -58,6 +66,9 @@ def main():
                                max_per_page=args.max_per_page))
     elif args.cmd == "embed-audio":
         _print(tools.embed_audio(args.video_id, leadin=args.leadin))
+    elif args.cmd == "render-video":
+        _print(tools.render_video(args.video_id, leadin=args.leadin,
+                                  title_hold=args.title_hold))
     elif args.cmd == "retrim":
         _print(tools.retrim(args.video_id, args.coords, intro=args.intro,
                             outro=args.outro, front=args.front, back=args.back))

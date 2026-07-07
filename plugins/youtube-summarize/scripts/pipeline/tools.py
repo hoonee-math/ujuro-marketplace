@@ -12,6 +12,7 @@ from pipeline.trim import trim
 from pipeline.build_ppt_compact import build_ppt_compact
 from pipeline.build_a4 import build_a4, DEFAULT_MAX_PER_PAGE
 from pipeline.autoplay import build_autoplay
+from pipeline.build_video import build_video
 from pipeline.schema import validate_analysis, validate_study
 from pipeline.logging_setup import setup_logging
 
@@ -88,6 +89,21 @@ def render(video_id: str) -> dict:
     log.info("rendered %s (%d sentences)", video_id, n)
     return {"pptx_path": str(wd / "slides.pptx"), "mp3_path": str(wd / "audio.trimmed.mp3"),
             "study_json_path": str(work / "study.json"), "n_sentences": n}
+
+
+def render_video(video_id: str, leadin: float = 0.0, title_hold: float = 3.0) -> dict:
+    """render 산출물(slides.pptx + audio.trimmed.mp3)로 페이지 자동전환 MP4를 만든다.
+
+    각 페이지가 그 구간 나레이션이 끝나면 자동으로 다음 페이지로 넘어간다.
+    슬라이드→이미지는 PowerPoint COM 이라 Windows + MS PowerPoint 가 필요하다.
+    """
+    wd = workdir_for(video_id)
+    work = work_dir(wd)
+    study = json.loads((work / "study.json").read_text(encoding="utf-8"))
+    res = build_video(study, wd, leadin=leadin, title_hold=title_hold)
+    log.info("rendered video %s -> %s (%d slides, %.1fs)", video_id,
+             res["video_path"], res["n_content_slides"], res["video_seconds"])
+    return res
 
 
 def embed_audio(video_id: str, leadin: float = 1.0) -> dict:
