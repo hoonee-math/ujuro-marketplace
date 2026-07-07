@@ -53,9 +53,13 @@ PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run collect "<URL>
 
 ### 4) 렌더
 ```bash
-PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render <video-id>
+PYTHONPATH="${CLAUDE_PLUGIN_ROOT}/scripts" python -m pipeline.run render <video-id> [--layout compact]
 ```
-→ `{"pptx_path","mp3_path","study_json_path","n_sentences"}`. 사용자에게 경로 안내.
+→ `{"pptx_path","mp3_path","study_json_path","n_sentences","layout"}`. 사용자에게 경로 안내.
+- 레이아웃: 기본 `classic`(16:9, 예문 영어/한글 두 줄). 사용자가 "컴팩트하게", "한 페이지에 많이",
+  "A4 가로로" 를 원하면 `--layout compact`(A4 가로, 예문 영어+한글 한 줄 — 페이지 수 대폭 감소).
+- 선택은 `.work/render.json` 에 저장되어 embed-audio·retrim 이 자동으로 같은 레이아웃을 쓴다.
+  레이아웃을 바꾸려면 원하는 `--layout` 으로 render 를 다시 실행하면 된다.
 
 ### 5) (옵션) PPT에 음성 포함 — 렌더 후 사용자에게 물어본다
 렌더 결과를 안내한 뒤 **"PPT에 음성을 넣어 슬라이드가 자동으로 재생·전환되는 버전도 만들까요?"** 라고 묻는다.

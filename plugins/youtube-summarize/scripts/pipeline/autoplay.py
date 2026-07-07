@@ -42,11 +42,15 @@ def _audio_duration(mp3: Path) -> float:
     return int(h) * 3600 + int(mi) * 60 + float(s)
 
 
-def _slide_starts(study: dict):
-    """build_ppt 와 동일한 페이지네이션으로 내용 슬라이드별 시작 시각(트림 기준)을 구한다."""
-    prs = Presentation()
-    usable_h = prs.slide_height - TOP - BOTTOM
-    pages = _paginate(_groups(study["deck"]["rows"]), usable_h)
+def _slide_starts(study: dict, layout: str = "classic"):
+    """렌더와 동일한 페이지네이션으로 내용 슬라이드별 시작 시각(트림 기준)을 구한다."""
+    if layout == "compact":
+        from pipeline.build_ppt_compact import content_pages
+        pages = content_pages(study)
+    else:
+        prs = Presentation()
+        usable_h = prs.slide_height - TOP - BOTTOM
+        pages = _paginate(_groups(study["deck"]["rows"]), usable_h)
     return [pg[0][0]["t_seconds"] for pg in pages]
 
 
@@ -150,10 +154,11 @@ def _fix_audio_rel_types(pptx_path: Path) -> int:
     return fixed
 
 
-def build_autoplay(study: dict, wd, leadin: float = 1.0) -> dict:
+def build_autoplay(study: dict, wd, leadin: float = 1.0, layout: str = "classic") -> dict:
     """slides.pptx + audio.trimmed.mp3 → slides.autoplay.pptx.
 
     leadin: 각 구간을 시작점보다 몇 초 앞당겨 자를지(중복 허용, 첫 구간은 0에서 클램프). 끝은 그대로.
+    layout: slides.pptx 를 만든 레이아웃(classic|compact) — 같은 페이지네이션으로 구간을 나눈다.
     대상 파일이 PowerPoint 에서 열려 잠겨 있으면 slides.autoplay.new.pptx 로 대체 저장한다.
     """
     wd = Path(wd)
@@ -164,7 +169,7 @@ def build_autoplay(study: dict, wd, leadin: float = 1.0) -> dict:
         raise FileNotFoundError("먼저 render 로 slides.pptx 와 audio.trimmed.mp3 를 만들어야 합니다.")
 
     total = _audio_duration(mp3)
-    starts = _slide_starts(study)
+    starts = _slide_starts(study, layout)
     segs = _split_segments(mp3, starts, total, wd / ".work" / "seg", leadin)
 
     prs = Presentation(str(src))

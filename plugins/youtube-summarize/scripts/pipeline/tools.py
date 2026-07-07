@@ -10,8 +10,19 @@ from pipeline.transcribe import transcript_from_vtt
 from pipeline.derive import apply_cut, resolve_cut
 from pipeline.trim import trim
 from pipeline.build_ppt import build_ppt
+from pipeline.build_ppt_compact import build_ppt_compact
 from pipeline.build_a4 import build_a4, DEFAULT_MAX_PER_PAGE
 from pipeline.autoplay import build_autoplay
+
+LAYOUTS = {"classic": build_ppt, "compact": build_ppt_compact}
+
+
+def _saved_layout(work) -> str:
+    """render 가 남긴 레이아웃 마커(.work/render.json). 없으면 classic."""
+    p = work / "render.json"
+    if p.exists():
+        return json.loads(p.read_text(encoding="utf-8")).get("layout", "classic")
+    return "classic"
 from pipeline.schema import validate_analysis, validate_study
 from pipeline.logging_setup import setup_logging
 
@@ -49,12 +60,16 @@ def collect(url: str) -> dict:
             "duration_seconds": meta["duration_seconds"]}
 
 
-def render(video_id: str) -> dict:
+def render(video_id: str, layout: str = "classic") -> dict:
     """Claude가 .work/analysis.json(type/cut/deck)을 읽어 study.json·트림 MP3·PPT 생성.
 
     중간물(analysis/cut/study)은 .work 에, 최종물(slides.pptx·audio.trimmed.mp3)은 workdir 루트에.
     source(title/channel/duration)는 info.json에서 서버가 채운다.
+    layout: classic(16:9, 영어/한글 두 줄) | compact(A4 가로, 영어+한글 한 줄 — 페이지당 문장 수 증가).
+    선택한 레이아웃은 .work/render.json 에 남겨 embed-audio·retrim 이 같은 페이지네이션을 쓴다.
     """
+    if layout not in LAYOUTS:
+        raise ValueError(f"지원하지 않는 layout: {layout} (지원: {sorted(LAYOUTS)})")
     wd = workdir_for(video_id)
     work = work_dir(wd)
     doc = json.loads((work / "analysis.json").read_text(encoding="utf-8"))
@@ -82,11 +97,12 @@ def render(video_id: str) -> dict:
         raise ValueError(f"study 검증 실패: {serrs}")
     (work / "study.json").write_text(json.dumps(study, ensure_ascii=False, indent=2), encoding="utf-8")
     trim(work / "audio.source.mp3", cut["intro_end"], cut["outro_start"], wd / "audio.trimmed.mp3")
-    build_ppt(study, wd / "slides.pptx")
+    LAYOUTS[layout](study, wd / "slides.pptx")
+    (work / "render.json").write_text(json.dumps({"layout": layout}, ensure_ascii=False), encoding="utf-8")
     n = sum(1 for r in study["deck"]["rows"] if r["kind"] == "line")
-    log.info("rendered %s (%d sentences)", video_id, n)
+    log.info("rendered %s layout=%s (%d sentences)", video_id, layout, n)
     return {"pptx_path": str(wd / "slides.pptx"), "mp3_path": str(wd / "audio.trimmed.mp3"),
-            "study_json_path": str(work / "study.json"), "n_sentences": n}
+            "study_json_path": str(work / "study.json"), "n_sentences": n, "layout": layout}
 
 
 def embed_audio(video_id: str, leadin: float = 1.0) -> dict:
@@ -98,8 +114,9 @@ def embed_audio(video_id: str, leadin: float = 1.0) -> dict:
     wd = workdir_for(video_id)
     work = work_dir(wd)
     study = json.loads((work / "study.json").read_text(encoding="utf-8"))
-    res = build_autoplay(study, wd, leadin=leadin)
-    log.info("embedded audio %s -> %s (%d slides)", video_id,
+    layout = _saved_layout(work)
+    res = build_autoplay(study, wd, leadin=leadin, layout=layout)
+    log.info("embedded audio %s layout=%s -> %s (%d slides)", video_id, layout,
              res["autoplay_pptx_path"], res["n_content_slides"])
     return res
 
@@ -145,7 +162,7 @@ def retrim(video_id: str, coords: str, intro=None, outro=None, front=None, back=
     study = apply_cut(analysis, new_cut)
     (work / "study.json").write_text(json.dumps(study, ensure_ascii=False, indent=2), encoding="utf-8")
     trim(work / "audio.source.mp3", new_cut["intro_end"], new_cut["outro_start"], wd / "audio.trimmed.mp3")
-    build_ppt(study, wd / "slides.pptx")
+    LAYOUTS[_saved_layout(work)](study, wd / "slides.pptx")
     return {"pptx_path": str(wd / "slides.pptx"), "mp3_path": str(wd / "audio.trimmed.mp3"),
             "backup_dir": str(slot), "backed_up": backed,
             "cut": {"intro_end": new_cut["intro_end"], "outro_start": new_cut["outro_start"]}}
