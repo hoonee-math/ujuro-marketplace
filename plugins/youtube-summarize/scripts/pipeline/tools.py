@@ -91,18 +91,20 @@ def render(video_id: str) -> dict:
             "study_json_path": str(work / "study.json"), "n_sentences": n}
 
 
-def render_video(video_id: str, leadin: float = 0.0, title_hold: float = 3.0) -> dict:
+def render_video(video_id: str, leadin: float = 0.0, title_hold: float = 3.0,
+                 include_title: bool = False) -> dict:
     """render 산출물(slides.pptx + audio.trimmed.mp3)로 페이지 자동전환 MP4를 만든다.
 
     각 페이지가 그 구간 나레이션이 끝나면 자동으로 다음 페이지로 넘어간다.
+    include_title=False(기본): 표지(첫 페이지) 없이 내용 페이지부터 시작.
     슬라이드→이미지는 PowerPoint COM 이라 Windows + MS PowerPoint 가 필요하다.
     """
     wd = workdir_for(video_id)
     work = work_dir(wd)
     study = json.loads((work / "study.json").read_text(encoding="utf-8"))
-    res = build_video(study, wd, leadin=leadin, title_hold=title_hold)
-    log.info("rendered video %s -> %s (%d slides, %.1fs)", video_id,
-             res["video_path"], res["n_content_slides"], res["video_seconds"])
+    res = build_video(study, wd, leadin=leadin, title_hold=title_hold, include_title=include_title)
+    log.info("rendered video %s -> %s (%d slides, %.1fs, title=%s)", video_id,
+             res["video_path"], res["n_content_slides"], res["video_seconds"], include_title)
     return res
 
 

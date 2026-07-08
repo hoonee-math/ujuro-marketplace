@@ -61,7 +61,8 @@ def _title_clip(ff: str, png: Path, hold: float, out: Path) -> None:
                    check=True, capture_output=True)
 
 
-def build_video(study: dict, wd, leadin: float = 0.0, title_hold: float = 3.0) -> dict:
+def build_video(study: dict, wd, leadin: float = 0.0, title_hold: float = 3.0,
+                include_title: bool = False) -> dict:
     wd = Path(wd)
     src = wd / "slides.pptx"
     mp3 = wd / "audio.trimmed.mp3"
@@ -85,9 +86,10 @@ def build_video(study: dict, wd, leadin: float = 0.0, title_hold: float = 3.0) -
     clips_dir.mkdir(parents=True, exist_ok=True)
 
     clip_paths = []
-    tclip = clips_dir / "clip-00.mp4"
-    _title_clip(ff, frames[0], title_hold, tclip)
-    clip_paths.append(tclip)
+    if include_title:
+        tclip = clips_dir / "clip-00.mp4"
+        _title_clip(ff, frames[0], title_hold, tclip)
+        clip_paths.append(tclip)
     for i, seg in enumerate(segs):
         cclip = clips_dir / f"clip-{i + 1:02d}.mp4"
         _content_clip(ff, frames[i + 1], seg["file"], seg["dur"], cclip)
@@ -98,6 +100,7 @@ def build_video(study: dict, wd, leadin: float = 0.0, title_hold: float = 3.0) -
     subprocess.run([ff, "-y", "-f", "concat", "-safe", "0", "-i", str(list_file),
                     "-c", "copy", str(out)], check=True, capture_output=True)
 
+    secs = sum(s["dur"] for s in segs) + (title_hold if include_title else 0.0)
     return {"video_path": str(out), "n_content_slides": len(segs),
-            "title_hold_seconds": title_hold, "leadin_seconds": leadin,
-            "video_seconds": round(sum(s["dur"] for s in segs) + title_hold, 2)}
+            "include_title": include_title, "title_hold_seconds": title_hold,
+            "leadin_seconds": leadin, "video_seconds": round(secs, 2)}
