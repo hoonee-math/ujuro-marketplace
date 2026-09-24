@@ -51,6 +51,8 @@ hoonee-math(최광훈)의 개인 Claude Code 플러그인 마켓플레이스입�
 4. 루트 `.claude-plugin/marketplace.json`의 `plugins` 배열에 한 항목 추가
 5. 커밋 & push → 사용자는 `/plugin marketplace update ujuro` 후 새 플러그인 설치
 
+> 구조·구성요소(커맨드/스킬/에이전트/훅/MCP) 요약과 최소 예시는 [docs/plugin-authoring.md](./docs/plugin-authoring.md) 참고.
+
 ## 로컬에서 검증
 
 ```bash
