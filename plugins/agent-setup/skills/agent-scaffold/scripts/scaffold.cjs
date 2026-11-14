@@ -51,11 +51,12 @@ function mergeGitignore(existing, block) {
 }
 
 /**
- * @param {{ dir: string, agents: string[], gitignore?: boolean, dryRun?: boolean }} options
+ * 에이전트를 지정하지 않으면 템플릿이 있는 모든 에이전트를 만들고, .gitignore 규칙도 기본으로 넣는다.
+ * @param {{ dir: string, agents?: string[], gitignore?: boolean, dryRun?: boolean }} options
  * @returns {{ results: object[], templates: object[] }}
  */
-function scaffold({ dir, agents, gitignore = false, dryRun = false }) {
-  const names = [COMMON, ...new Set(agents)]
+function scaffold({ dir, agents = [], gitignore = true, dryRun = false }) {
+  const names = [COMMON, ...new Set(agents.length > 0 ? agents : available())]
   const templates = names.map(name => {
     const template = loadTemplate(name)
     if (!template) {
@@ -114,15 +115,16 @@ function printList() {
 }
 
 function main(argv) {
-  const options = { dir: process.cwd(), agents: [], gitignore: false, dryRun: false }
+  const options = { dir: process.cwd(), agents: [], gitignore: true, dryRun: false }
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]
     if (arg === '--dir') options.dir = argv[++i]
-    else if (arg === '--gitignore') options.gitignore = true
+    else if (arg === '--no-gitignore') options.gitignore = false
     else if (arg === '--dry-run') options.dryRun = true
     else if (arg === '--list') return printList()
     else if (arg === '--help' || arg === '-h') {
-      console.log('사용법: node scaffold.cjs [--dir <폴더>] [--gitignore] [--dry-run] <에이전트>...')
+      console.log('사용법: node scaffold.cjs [--dir <폴더>] [--no-gitignore] [--dry-run] [<에이전트>...]')
+      console.log('        에이전트를 적지 않으면 모든 에이전트를 만든다.')
       console.log('        node scaffold.cjs --list')
       return
     } else if (arg.startsWith('-')) throw new Error(`알 수 없는 옵션: ${arg}`)

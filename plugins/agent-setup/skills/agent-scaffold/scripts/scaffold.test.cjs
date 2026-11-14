@@ -4,7 +4,7 @@ const assert = require('node:assert')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
-const { scaffold, BLOCK_START, BLOCK_END } = require('./scaffold.cjs')
+const { scaffold, available, BLOCK_START, BLOCK_END } = require('./scaffold.cjs')
 
 function workdir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'scaffold-test-'))
@@ -23,9 +23,19 @@ test('에이전트를 하나만 골라도 공통 지침 파일 두 개를 만든
   }
 })
 
+test('아무것도 지정하지 않으면 모든 에이전트와 .gitignore 를 만든다', () => {
+  const dir = workdir()
+  const { templates } = scaffold({ dir })
+  assert.deepStrictEqual(templates.map(one => one.name), ['common', ...available()])
+  assert.ok(exists(dir, '.claude/settings.json'))
+  assert.ok(exists(dir, '.codex/config.toml'))
+  assert.ok(exists(dir, '.gitignore'))
+  fs.rmSync(dir, { recursive: true })
+})
+
 test('고른 에이전트의 파일만 만든다', () => {
   const dir = workdir()
-  scaffold({ dir, agents: ['claude'] })
+  scaffold({ dir, agents: ['claude'], gitignore: false })
   assert.ok(exists(dir, '.claude/settings.json'))
   assert.ok(exists(dir, '.claude/skills/.gitkeep'))
   assert.ok(exists(dir, '.mcp.json'))
