@@ -1,0 +1,17 @@
+{
+  "name": "recent-commits",
+  "description": "현재 폴더 git 저장소의 미커밋 요약과 최근 커밋 3개를 프롬프트 위에 표시하는 mod",
+  "version": "1.0.0",
+  "author": {
+    "name": "최광훈 (hoonee-math)",
+    "url": "https://github.com/hoonee-math"
+  },
+  "homepage": "https://github.com/hoonee-math/ujuro-marketplace",
+  "keywords": [
+    "mod",
+    "git",
+    "commits",
+    "status"
+  ],
+  "types": "./types/index.d.ts"
+}

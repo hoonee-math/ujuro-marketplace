@@ -1,0 +1,11 @@
+{
+  "name": "agent-setup",
+  "description": "프로젝트의 코딩 에이전트 설정을 공식 문서 기준으로 처음 만들거나 정리한다. git init 때 안내 훅 포함",
+  "version": "1.0.0",
+  "author": {
+    "name": "최광훈 (hoonee-math)",
+    "url": "https://github.com/hoonee-math"
+  },
+  "homepage": "https://github.com/hoonee-math/ujuro-marketplace",
+  "keywords": ["agents", "setup", "AGENTS.md", "project-init"]
+}

@@ -12,14 +12,48 @@
       "source": "./plugins/hello-ujuro",
       "description": "ujuro 마켓플레이스와 제작자 최광훈(hoonee-math)을 소개하는 인사 플러그인",
       "version": "1.0.0",
-      "keywords": ["hello", "introduction", "ujuro"]
+      "keywords": [
+        "hello",
+        "introduction",
+        "ujuro"
+      ]
     },
     {
       "name": "youtube-summarize",
       "source": "./plugins/youtube-summarize",
       "description": "YouTube 영상 또는 제공된 영어 회화 자료를 학습용 PPT + 편집 MP3로 만든다 (초기 지원: 영어 회화연습)",
       "version": "1.0.0",
-      "keywords": ["youtube", "ppt", "english", "study", "summarize"]
+      "keywords": [
+        "youtube",
+        "ppt",
+        "english",
+        "study",
+        "summarize"
+      ]
+    },
+    {
+      "name": "agent-setup",
+      "source": "./plugins/agent-setup",
+      "description": "프로젝트의 코딩 에이전트 설정을 공식 문서 기준으로 처음 만들거나 정리한다. git init 때 안내 훅 포함",
+      "version": "1.0.0",
+      "keywords": [
+        "agents",
+        "setup",
+        "AGENTS.md",
+        "project-init"
+      ]
+    },
+    {
+      "name": "recent-commits",
+      "source": "./plugins/recent-commits",
+      "description": "현재 폴더 git 저장소의 미커밋 요약과 최근 커밋 3개를 프롬프트 위에 표시하는 mod",
+      "version": "1.0.0",
+      "keywords": [
+        "mod",
+        "git",
+        "commits",
+        "status"
+      ]
     }
   ]
 }

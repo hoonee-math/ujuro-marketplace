@@ -25,6 +25,8 @@ hoonee-math(최광훈)의 개인 Claude Code 플러그인 마켓플레이스입�
 | 플러그인 | 설명 | 구성 |
 |----------|------|------|
 | `hello-ujuro` | ujuro 마켓플레이스 / 제작자 소개 | 슬래시 커맨드 `/hello` + 스킬 `ujuro-greeting` |
+| `agent-setup` | 프로젝트의 코딩 에이전트 설정을 공식 문서 기준으로 만들거나 정리 | 스킬 `agent-setup` + `git init` 안내 훅 |
+| `recent-commits` | 미커밋 요약과 최근 커밋을 프롬프트 위에 표시 | mod (`/commits-refresh`) |
 
 ## 저장소 구조
 

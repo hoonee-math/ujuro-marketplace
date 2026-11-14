@@ -16,3 +16,6 @@ __pycache__/
 
 # 스킬 산출물 (혹시 repo 안에서 실행될 경우)
 /youtube-summarize/
+
+# mod 를 로드할 때 엔진이 만드는 타입 파일
+plugins/*/.claude-plugin/types/
