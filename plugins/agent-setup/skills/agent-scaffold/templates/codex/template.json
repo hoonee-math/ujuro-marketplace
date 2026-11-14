@@ -1,13 +1,19 @@
 {
   "name": "codex",
   "title": "Codex",
-  "verified": "2026-11-14",
   "files": [
     {
       "path": ".codex/config.toml",
       "from": "config.toml",
       "description": "프로젝트 설정 — 신뢰한 프로젝트에서만 읽힌다",
-      "doc": "https://learn.chatgpt.com/docs/config-file/config-basic.md"
+      "doc": "https://learn.chatgpt.com/docs/config-file/config-basic.md",
+      "keys": [
+        {
+          "key": "mcp_servers",
+          "description": "외부 도구를 연결하는 MCP 서버 정의 (예시로 주석 처리돼 있다)",
+          "doc": "https://learn.chatgpt.com/docs/extend/mcp.md"
+        }
+      ]
     },
     {
       "path": ".agents/skills/.gitkeep",

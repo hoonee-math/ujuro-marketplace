@@ -1,6 +1,5 @@
 # Codex 프로젝트 설정 — 신뢰한 프로젝트에서만 읽힌다
 # 문서: https://learn.chatgpt.com/docs/config-file/config-basic.md
-# 기준: {{verified}} 공식 문서
 
 # MCP 서버 — 외부 도구 연결
 # 문서: https://learn.chatgpt.com/docs/extend/mcp.md

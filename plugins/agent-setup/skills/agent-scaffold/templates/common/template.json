@@ -1,7 +1,6 @@
 {
   "name": "common",
   "title": "공통 지침 파일",
-  "verified": "2026-11-14",
   "files": [
     {
       "path": "AGENTS.md",

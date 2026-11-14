@@ -6,8 +6,6 @@ const path = require('path')
 
 const TEMPLATES = path.join(__dirname, '..', 'templates')
 const COMMON = 'common'
-/** 이 날수보다 오래된 템플릿은 공식 문서를 다시 확인하라고 알린다. */
-const STALE_DAYS = 90
 const BLOCK_START = '# >>> agent-setup (이 블록은 scaffold 스크립트가 관리한다)'
 const BLOCK_END = '# <<< agent-setup'
 
@@ -23,10 +21,6 @@ function available() {
     .filter(entry => entry.isDirectory() && entry.name !== COMMON)
     .map(entry => entry.name)
     .sort()
-}
-
-function ageInDays(verified, now) {
-  return Math.floor((now - new Date(`${verified}T00:00:00Z`).getTime()) / 86400000)
 }
 
 function fill(text, values) {
@@ -57,10 +51,10 @@ function mergeGitignore(existing, block) {
 }
 
 /**
- * @param {{ dir: string, agents: string[], gitignore?: boolean, dryRun?: boolean, now?: number }} options
- * @returns {{ results: object[], templates: object[], stale: object[] }}
+ * @param {{ dir: string, agents: string[], gitignore?: boolean, dryRun?: boolean }} options
+ * @returns {{ results: object[], templates: object[] }}
  */
-function scaffold({ dir, agents, gitignore = false, dryRun = false, now = Date.now() }) {
+function scaffold({ dir, agents, gitignore = false, dryRun = false }) {
   const names = [COMMON, ...new Set(agents)]
   const templates = names.map(name => {
     const template = loadTemplate(name)
@@ -71,13 +65,13 @@ function scaffold({ dir, agents, gitignore = false, dryRun = false, now = Date.n
   })
 
   const target = path.resolve(dir)
+  const values = { project: path.basename(target) }
   const results = []
 
   for (const template of templates) {
-    const values = { project: path.basename(target), verified: template.verified }
     for (const file of template.files) {
       const destination = path.join(target, file.path)
-      const result = { ...file, agent: template.name, verified: template.verified }
+      const result = { ...file, agent: template.name }
       if (fs.existsSync(destination)) {
         results.push({ ...result, status: '건너뜀(이미 있음)' })
         continue
@@ -109,15 +103,13 @@ function scaffold({ dir, agents, gitignore = false, dryRun = false, now = Date.n
     })
   }
 
-  const stale = templates.filter(template => ageInDays(template.verified, now) > STALE_DAYS)
-  return { results, templates, stale }
+  return { results, templates }
 }
 
-function printList(now) {
+function printList() {
   console.log('사용할 수 있는 에이전트:')
   for (const name of available()) {
-    const template = loadTemplate(name)
-    console.log(`  ${name} — ${template.title} (기준 ${template.verified}, ${ageInDays(template.verified, now)}일 전)`)
+    console.log(`  ${name} — ${loadTemplate(name).title}`)
   }
 }
 
@@ -128,7 +120,7 @@ function main(argv) {
     if (arg === '--dir') options.dir = argv[++i]
     else if (arg === '--gitignore') options.gitignore = true
     else if (arg === '--dry-run') options.dryRun = true
-    else if (arg === '--list') return printList(Date.now())
+    else if (arg === '--list') return printList()
     else if (arg === '--help' || arg === '-h') {
       console.log('사용법: node scaffold.cjs [--dir <폴더>] [--gitignore] [--dry-run] <에이전트>...')
       console.log('        node scaffold.cjs --list')
@@ -137,22 +129,17 @@ function main(argv) {
     else options.agents.push(arg)
   }
 
-  const { results, templates, stale } = scaffold(options)
+  const { results } = scaffold(options)
 
   console.log(`${options.dryRun ? '[미리 보기] ' : ''}대상 폴더: ${path.resolve(options.dir)}`)
   for (const result of results) {
     console.log(`  ${result.status}  ${result.path}`)
     console.log(`      ${result.description} — ${result.doc}`)
+    for (const one of result.keys ?? []) {
+      console.log(`        ${one.key}: ${one.description} — ${one.doc}`)
+    }
   }
-  console.log('\n템플릿 기준일:')
-  for (const template of templates) {
-    console.log(`  ${template.title}: ${template.verified} 공식 문서 기준`)
-  }
-  if (stale.length > 0) {
-    console.log(
-      `\n주의: ${stale.map(one => one.title).join(', ')} 템플릿이 ${STALE_DAYS}일 넘게 확인되지 않았다. 커밋 전에 공식 문서와 대조한다.`,
-    )
-  }
+  console.log('\n위 설명은 템플릿에 적힌 것이다. 커밋 전에 공식 문서와 대조한다.')
 }
 
 module.exports = { scaffold, mergeGitignore, gitignoreBlock, available, BLOCK_START, BLOCK_END }
