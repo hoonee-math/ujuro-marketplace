@@ -1,7 +1,7 @@
 {
   "name": "agent-setup",
   "description": "프로젝트의 코딩 에이전트 설정을 공식 문서 기준으로 만들고 정리한다. 뼈대 생성 스크립트, 문서 대조, git init 안내 훅 포함",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "최광훈 (hoonee-math)",
     "url": "https://github.com/hoonee-math"

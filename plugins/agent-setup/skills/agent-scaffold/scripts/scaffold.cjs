@@ -131,7 +131,7 @@ function main(argv) {
     else options.agents.push(arg)
   }
 
-  const { results } = scaffold(options)
+  const { results, templates } = scaffold(options)
 
   console.log(`${options.dryRun ? '[미리 보기] ' : ''}대상 폴더: ${path.resolve(options.dir)}`)
   for (const result of results) {
@@ -139,6 +139,15 @@ function main(argv) {
     console.log(`      ${result.description} — ${result.doc}`)
     for (const one of result.keys ?? []) {
       console.log(`        ${one.key}: ${one.description} — ${one.doc}`)
+    }
+  }
+  const preferences = templates.flatMap(template =>
+    (template.preferences ?? []).map(one => ({ ...one, title: template.title })),
+  )
+  if (preferences.length > 0) {
+    console.log('\n사용자 선택 (공식 문서의 권장과 달라도 차이로 보지 않는다):')
+    for (const one of preferences) {
+      console.log(`  [${one.title}] ${one.item} — ${one.reason}`)
     }
   }
   console.log('\n위 설명은 템플릿에 적힌 것이다. 커밋 전에 공식 문서와 대조한다.')

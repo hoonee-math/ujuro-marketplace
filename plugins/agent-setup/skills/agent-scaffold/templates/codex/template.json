@@ -22,9 +22,15 @@
     }
   ],
   "gitignore": [
-    "# Codex 스킬 본체 — 외부에서 받은 것은 잠금 파일로 복원한다",
+    "# Codex 스킬 본체 (사용자 선택) — 외부에서 받은 것은 커밋하지 않고 잠금 파일로 복원한다",
     "# 직접 만든 스킬은 `!.agents/skills/<이름>/` 처럼 ! 로 제외해 함께 커밋한다",
     ".agents/skills/*",
     "!.agents/skills/.gitkeep"
+  ],
+  "preferences": [
+    {
+      "item": ".gitignore 의 `.agents/skills/*`",
+      "reason": "외부에서 받은 스킬 본체는 커밋하지 않고 잠금 파일로 복원한다. 직접 만든 스킬은 ! 로 제외해 커밋한다."
+    }
   ]
 }

@@ -20,5 +20,11 @@
     ".env",
     ".env.*",
     "!.env.example"
+  ],
+  "preferences": [
+    {
+      "item": "`CLAUDE.md` 의 `@AGENTS.md` 한 줄",
+      "reason": "지침 본문은 AGENTS.md 한 곳에 쓰고, 에이전트 전용 지침 파일은 그것을 불러오기만 한다."
+    }
   ]
 }

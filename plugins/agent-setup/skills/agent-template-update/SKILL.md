@@ -28,7 +28,7 @@ agent-scaffold 스킬의 "서브에이전트를 띄울 때"대로 `issue-reporte
 
 1. **문서를 확인한다.** agent-setup 스킬의 "표준을 확인하는 방법"대로 그 에이전트의 현재 공식 문서를 읽는다.
 2. **템플릿을 고친다.**
-   - `template.json` — 만들 파일 목록(`path`, 내용을 가져올 `from`, 짧은 `description`, 공식 문서 `doc`), 설정 파일의 키별 설명(`keys` — `key`, `description`, `doc`), `.gitignore` 에 넣을 줄(`gitignore`).
+   - `template.json` — 만들 파일 목록(`path`, 내용을 가져올 `from`, 짧은 `description`, 공식 문서 `doc`), 설정 파일의 키별 설명(`keys` — `key`, `description`, `doc`), `.gitignore` 에 넣을 줄(`gitignore`). 문서의 권장과 달라도 의도한 항목은 `preferences`(`item`, `reason`)에 적어, 문서 대조에서 차이로 잡히지 않게 한다.
    - 주석을 달 수 있는 형식의 파일에는 옵션의 짧은 설명과 공식 문서 주소를 주석으로 넣는다. 주석을 지원하지 않는 형식에는 넣지 않고, 설명과 주소는 `template.json` 에만 둔다.
    - 날짜는 적지 않는다. 언제 무엇이 바뀌었는지는 저장소 이력과 이슈가 기록한다.
 3. **시험한다.** 플러그인 폴더에서 `node --test "**/*.test.cjs"` 로 시험을 돌리고, 임시 폴더에 실제로 만들어 결과를 본다. 동작이 바뀌었으면 시험을 함께 고친다.

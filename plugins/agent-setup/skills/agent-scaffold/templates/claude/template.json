@@ -25,7 +25,7 @@
         },
         {
           "key": "hooks",
-          "description": "도구 실행 전후 같은 시점에 자동으로 돌릴 명령",
+          "description": "세션 시작·종료, 도구 실행 전후 같은 정해진 시점에 자동으로 실행할 훅",
           "doc": "https://code.claude.com/docs/en/hooks.md"
         }
       ]
@@ -63,9 +63,15 @@
     "# Claude Code 개인 설정 — https://code.claude.com/docs/en/memory.md",
     "CLAUDE.local.md",
     ".claude/settings.local.json",
-    "# Claude Code 스킬 본체 — 외부에서 받은 것은 잠금 파일로 복원한다",
+    "# Claude Code 스킬 본체 (사용자 선택) — 외부에서 받은 것은 커밋하지 않고 잠금 파일로 복원한다",
     "# 직접 만든 스킬은 `!.claude/skills/<이름>/` 처럼 ! 로 제외해 함께 커밋한다",
     ".claude/skills/*",
     "!.claude/skills/.gitkeep"
+  ],
+  "preferences": [
+    {
+      "item": ".gitignore 의 `.claude/skills/*`",
+      "reason": "외부에서 받은 스킬 본체는 커밋하지 않고 잠금 파일로 복원한다. 직접 만든 스킬은 ! 로 제외해 커밋한다."
+    }
   ]
 }

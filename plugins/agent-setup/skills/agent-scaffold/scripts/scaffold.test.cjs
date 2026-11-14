@@ -123,3 +123,13 @@ test('없는 에이전트 이름은 오류로 알린다', () => {
   assert.throws(() => scaffold({ dir, agents: ['nope'] }), /알 수 없는 에이전트/)
   fs.rmSync(dir, { recursive: true })
 })
+
+test('사용자 선택 항목을 템플릿마다 돌려준다', () => {
+  const dir = workdir()
+  const { templates } = scaffold({ dir, dryRun: true })
+  for (const template of templates) {
+    assert.ok(template.preferences.length > 0, template.name)
+    for (const one of template.preferences) assert.ok(one.item && one.reason)
+  }
+  fs.rmSync(dir, { recursive: true })
+})
