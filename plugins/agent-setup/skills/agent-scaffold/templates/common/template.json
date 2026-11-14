@@ -1,0 +1,25 @@
+{
+  "name": "common",
+  "title": "공통 지침 파일",
+  "verified": "2026-11-14",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "from": "AGENTS.md",
+      "description": "여러 에이전트가 함께 읽는 지침 본문",
+      "doc": "https://agents.md"
+    },
+    {
+      "path": "CLAUDE.md",
+      "from": "CLAUDE.md",
+      "description": "AGENTS.md 를 불러오는 한 줄",
+      "doc": "https://code.claude.com/docs/en/memory.md"
+    }
+  ],
+  "gitignore": [
+    "# 비밀 값",
+    ".env",
+    ".env.*",
+    "!.env.example"
+  ]
+}

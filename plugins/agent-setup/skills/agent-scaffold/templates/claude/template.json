@@ -1,0 +1,43 @@
+{
+  "name": "claude",
+  "title": "Claude Code",
+  "verified": "2026-11-14",
+  "files": [
+    {
+      "path": ".claude/settings.json",
+      "from": "settings.json",
+      "description": "프로젝트 설정 — 권한, 환경 변수, 훅",
+      "doc": "https://code.claude.com/docs/en/settings.md"
+    },
+    {
+      "path": ".claude/skills/.gitkeep",
+      "description": "프로젝트 스킬 폴더",
+      "doc": "https://code.claude.com/docs/en/skills.md"
+    },
+    {
+      "path": ".claude/agents/.gitkeep",
+      "description": "프로젝트 서브에이전트 폴더",
+      "doc": "https://code.claude.com/docs/en/sub-agents.md"
+    },
+    {
+      "path": ".claude/rules/.gitkeep",
+      "description": "주제별 지침 폴더",
+      "doc": "https://code.claude.com/docs/en/memory.md"
+    },
+    {
+      "path": ".mcp.json",
+      "from": "mcp.json",
+      "description": "프로젝트 MCP 서버 목록",
+      "doc": "https://code.claude.com/docs/en/mcp.md"
+    }
+  ],
+  "gitignore": [
+    "# Claude Code 개인 설정 — https://code.claude.com/docs/en/memory.md",
+    "CLAUDE.local.md",
+    ".claude/settings.local.json",
+    "# Claude Code 스킬 본체 — 외부에서 받은 것은 잠금 파일로 복원한다",
+    "# 직접 만든 스킬은 `!.claude/skills/<이름>/` 처럼 ! 로 제외해 함께 커밋한다",
+    ".claude/skills/*",
+    "!.claude/skills/.gitkeep"
+  ]
+}

@@ -1,4 +1,4 @@
-// 실행: node --test plugins/agent-setup/hooks
+// 실행: node --test "plugins/agent-setup/**/*.test.cjs"
 const { test } = require('node:test')
 const assert = require('node:assert')
 const { runsGitInit } = require('./git-init-guide.cjs')
